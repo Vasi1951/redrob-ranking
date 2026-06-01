@@ -1,0 +1,21 @@
+# Data files (large datasets)
+candidates.jsonl
+candidates.jsonl.gz
+sample_candidates.json
+*.jsonl
+*.jsonl.gz
+*.docx
+*.pdf
+
+# Python/environment files
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+.env
+
+# System / OS files
+.DS_Store
+Thumbs.db
