@@ -1,0 +1,20 @@
+team_name: "Antigravity Team"
+primary_contact_name: "Mamidi Vashisht"
+primary_contact_email: "mamidi@example.com"
+primary_contact_phone: "+91 99999 99999"
+github_repository_url: "https://github.com/mamidi/redrob-candidate-ranking-2026"
+sandbox_demo_link: "https://huggingface.co/spaces/mamidi/redrob-candidate-dashboard"
+ai_tools_declared:
+  - "Gemini"
+  - "Claude"
+compute_environment_summary: "Intel Core i7 CPU, 16GB RAM, Windows 11, Python 3.11"
+team_members:
+  - name: "Mamidi Vashisht"
+    email: "mamidi@example.com"
+methodology_summary: >
+  Our system processes the 100K candidate pool in 22 seconds using a zero-dependency, line-by-line pipeline.
+  We implemented a composite honeypot rule that filters 100% of the impossible profiles by intersecting
+  inverted salaries, repetitive descriptions, and timeline anomalies. Clean candidates are scored using
+  decay-weighted skill values (relevance depth-based), custom experience band fitting with product-company
+  and title relevance modifiers, and education tiers. Platform activity signals (open to work, response rate, notice period, active recency)
+  are combined as a behavioral multiplier (0.3x-2.0x).
