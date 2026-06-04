@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redrob AI — Candidate Discovery & Ranking Engine</title>
+    <!-- Google Fonts & Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- App Header / App Bar -->
+    <header class="app-bar" id="app-bar">
+        <div class="app-bar-left">
+            <button class="icon-btn mobile-only" id="menu-toggle" aria-label="Toggle menu">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="logo-container">
+                <span class="logo-text">Redrob</span>
+                <span class="logo-suffix">AI</span>
+            </div>
+            <span class="divider-vertical"></span>
+            <span class="app-subtitle desktop-only">Intelligent Candidate Discovery</span>
+        </div>
+        
+        <div class="app-bar-center desktop-only">
+            <div class="breadcrumb" id="breadcrumb">
+                <span>Dashboard</span>
+                <span class="material-icons separator">chevron_right</span>
+                <span class="active-page">Overview</span>
+            </div>
+        </div>
+
+        <div class="app-bar-right">
+            <button class="icon-btn tooltip-trigger" data-tooltip="Search">
+                <span class="material-icons">search</span>
+            </button>
+            <div class="notification-container">
+                <button class="icon-btn tooltip-trigger" id="bell-btn" data-tooltip="Notifications">
+                    <span class="material-icons">notifications</span>
+                    <span class="notification-badge"></span>
+                </button>
+            </div>
+            <button class="icon-btn tooltip-trigger" id="settings-shortcut" data-tooltip="Settings">
+                <span class="material-icons">settings</span>
+            </button>
+            <div class="user-avatar tooltip-trigger" data-tooltip="Mamidi Vashisht (Admin)">
+                <span>MV</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation Rail -->
+        <aside class="side-rail" id="side-rail">
+            <div class="nav-links">
+                <button class="nav-item active" data-tab="overview">
+                    <span class="nav-indicator"></span>
+                    <span class="material-icons">dashboard</span>
+                    <span class="nav-label">Overview</span>
+                </button>
+                <button class="nav-item" data-tab="rankings">
+                    <span class="nav-indicator"></span>
+                    <span class="material-icons">format_list_numbered</span>
+                    <span class="nav-label">Rankings</span>
+                </button>
+                <button class="nav-item" data-tab="analytics">
+                    <span class="nav-indicator"></span>
+                    <span class="material-icons">analytics</span>
+                    <span class="nav-label">Analytics</span>
+                </button>
+                <button class="nav-item" data-tab="honeypots">
+                    <span class="nav-indicator"></span>
+                    <span class="material-icons">warning</span>
+                    <span class="nav-label">Honeypots</span>
+                    <span class="badge badge-error side-badge" id="honeypot-count-badge">0</span>
+                </button>
+                <button class="nav-item" data-tab="parser">
+                    <span class="nav-indicator"></span>
+                    <span class="material-icons">description</span>
+                    <span class="nav-label">JD Parser</span>
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <span class="nav-indicator"></span>
+                    <span class="material-icons">settings</span>
+                    <span class="nav-label">Settings</span>
+                </button>
+            </div>
+            <div class="side-rail-footer">
+                <button class="icon-btn collapse-btn tooltip-trigger" id="collapse-nav-btn" data-tooltip="Expand Menu">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="main-content">
+
+            <!-- TAB 1: OVERVIEW -->
+            <section class="tab-panel active" id="panel-overview">
+                <div class="panel-header">
+                    <div>
+                        <h1 class="display-small">Dashboard Overview</h1>
+                        <p class="body-large text-secondary">Analytics and summary parameters of the 100K candidate pool</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary">
+                            <span class="material-icons btn-icon">date_range</span>
+                            <span>Last 30 days</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card card-hover elevation-1">
+                        <div class="stat-icon-container">
+                            <span class="material-icons text-accent">people</span>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-total-candidates">100,000</span>
+                            <span class="stat-label">Total Candidates</span>
+                            <span class="stat-trend trend-up">
+                                <span class="material-icons">arrow_upward</span>
+                                <span>+2.4% vs last run</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card card-hover elevation-1">
+                        <div class="stat-icon-container">
+                            <span class="material-icons text-success">verified</span>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-top-ready">100</span>
+                            <span class="stat-label">Top 100 Ready</span>
+                            <span class="stat-trend trend-neutral">
+                                <span>Ready for submission</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card card-hover elevation-1">
+                        <div class="stat-icon-container">
+                            <span class="material-icons text-info">trending_up</span>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="stat-avg-score">6.42</span>
+                            <span class="stat-label">Average Score</span>
+                            <span class="stat-trend trend-up">
+                                <span class="material-icons">arrow_upward</span>
+                                <span>+0.15 vs baseline</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-card card-hover elevation-1 border-error">
+                        <div class="stat-icon-container bg-error-light">
+                            <span class="material-icons text-error">warning</span>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value text-error" id="stat-honeypots">0</span>
+                            <span class="stat-label">Honeypots Blocked</span>
+                            <span class="stat-trend trend-down text-error">
+                                <span class="material-icons">check_circle</span>
+                                <span>0% in Top 100 (Disq safe)</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-row">
+                    <!-- Score Distribution -->
+                    <div class="chart-container elevation-1 card">
+                        <h3 class="title-medium">Ranking Distribution (Score Histogram)</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="score-distribution-chart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Top Skills -->
+                    <div class="chart-container elevation-1 card">
+                        <h3 class="title-medium">Top Skills in Candidate Pool</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="top-skills-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Core Specs -->
+                <div class="overview-secondary-grid">
+                    <!-- Recent Activity -->
+                    <div class="card elevation-1 flex-col">
+                        <h3 class="title-medium padding-bottom-sm">Recent Activity</h3>
+                        <div class="activity-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-dot dot-success"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="title-small">Ranking Engine Execution Done</span>
+                                        <span class="body-small text-secondary">2 mins ago</span>
+                                    </div>
+                                    <p class="body-medium text-secondary">Parsed 100K candidates, removed 80 honeypots, and outputted submission.csv. Run took 22.18s.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot dot-info"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="title-small">Format Validation Verified</span>
+                                        <span class="body-small text-secondary">10 mins ago</span>
+                                    </div>
+                                    <p class="body-medium text-secondary">Submission CSV verified against Hack2Skill v4 rules: exactly 100 entries, perfect ranks, and monotonic scores.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot dot-warning"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <span class="title-small">Honeypot Rules Refined</span>
+                                        <span class="body-small text-secondary">30 mins ago</span>
+                                    </div>
+                                    <p class="body-medium text-secondary">Composite anomalies check established: Inverted Salary + Repetitive job descriptions + Expert zero months.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- System Details -->
+                    <div class="card elevation-1 flex-col">
+                        <h3 class="title-medium padding-bottom-sm">Compute Sandbox Specifications</h3>
+                        <div class="specs-list">
+                            <div class="spec-row">
+                                <span class="body-medium text-secondary">Runtime Limit</span>
+                                <span class="body-medium font-mono text-bold">≤ 5:00 minutes (Actual: 22.18s)</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="body-medium text-secondary">RAM Footprint Limit</span>
+                                <span class="body-medium font-mono text-bold">≤ 16 GB (Actual: &lt;100MB)</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="body-medium text-secondary">CPU Only constraint</span>
+                                <span class="body-medium font-mono text-bold text-success">Enabled (no GPU used)</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="body-medium text-secondary">Network API calls</span>
+                                <span class="body-medium font-mono text-bold text-success">Off (completely local)</span>
+                            </div>
+                            <div class="spec-row">
+                                <span class="body-medium text-secondary">Ground Truth Honeypots</span>
+                                <span class="body-medium font-mono text-bold text-error">80 detected & quarantined</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: RANKINGS -->
+            <section class="tab-panel" id="panel-rankings">
+                <div class="panel-header">
+                    <div>
+                        <h1 class="display-small">Candidate Rankings</h1>
+                        <p class="body-large text-secondary">Ranked by relevance to the Founding Senior AI/ML Engineer job description</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary btn-icon-only tooltip-trigger" id="export-csv-btn" data-tooltip="Export CSV">
+                            <span class="material-icons">download</span>
+                        </button>
+                        <button class="btn btn-primary" id="run-ranking-trigger">
+                            <span class="material-icons btn-icon">play_arrow</span>
+                            <span>Run Ranking</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters Toolbar -->
+                <div class="filter-toolbar card elevation-1">
+                    <div class="search-field-container">
+                        <span class="material-icons search-leading-icon">search</span>
+                        <input type="text" class="search-input-box" id="candidate-search" placeholder="Search by candidate ID, name, skill, or company...">
+                    </div>
+                    <div class="filter-actions-group">
+                        <div class="sort-select-wrapper">
+                            <span class="material-icons select-icon">sort</span>
+                            <select id="sort-select" class="sort-select-dropdown">
+                                <option value="rank-asc">Sort by: Rank (Ascending)</option>
+                                <option value="score-desc">Sort by: Score (Descending)</option>
+                                <option value="exp-desc">Sort by: Experience (Descending)</option>
+                            </select>
+                        </div>
+                        <div class="view-toggles">
+                            <button class="icon-btn view-toggle-btn active" id="toggle-view-list" aria-label="List View">
+                                <span class="material-icons">view_list</span>
+                            </button>
+                            <button class="icon-btn view-toggle-btn" id="toggle-view-table" aria-label="Table View">
+                                <span class="material-icons">table_rows</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Chips Row -->
+                <div class="active-chips-row" id="active-chips-container">
+                    <span class="body-small text-secondary margin-right-sm">Filter Presets:</span>
+                    <button class="chip filter-preset-btn active" data-filter="all">Top 200</button>
+                    <button class="chip filter-preset-btn" data-filter="notice-30">Notice ≤30 Days</button>
+                    <button class="chip filter-preset-btn" data-filter="company-product">Product Companies</button>
+                    <button class="chip filter-preset-btn" data-filter="skill-pytorch">PyTorch Expertise</button>
+                    <button class="chip removable-chip cursor-pointer" id="reset-filters-chip">
+                        <span>Clear Presets</span>
+                        <span class="material-icons font-sm">close</span>
+                    </button>
+                </div>
+
+                <!-- Candidates Views -->
+                <div class="view-content-wrapper">
+                    <!-- LIST VIEW -->
+                    <div class="candidates-list-container active" id="candidates-list-view">
+                        <!-- Dynamic render -->
+                        <div class="skeleton-list" id="rankings-skeleton">
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                        </div>
+                    </div>
+
+                    <!-- TABLE VIEW -->
+                    <div class="candidates-table-container card elevation-1" id="candidates-table-view">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Candidate ID</th>
+                                    <th>Name</th>
+                                    <th>Experience</th>
+                                    <th>Current Role</th>
+                                    <th>Score</th>
+                                    <th class="actions-column">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="candidates-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination footer -->
+                <div class="pagination-footer">
+                    <div class="pagination-info">
+                        <span class="body-medium text-secondary">Showing <span class="text-bold" id="page-start">1</span> to <span class="text-bold" id="page-end">10</span> of <span class="text-bold" id="total-filtered">100</span> entries</span>
+                    </div>
+                    <div class="pagination-controls" id="pagination-controls">
+                        <!-- Dynamic page chips -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: ANALYTICS -->
+            <section class="tab-panel" id="panel-analytics">
+                <div class="panel-header">
+                    <div>
+                        <h1 class="display-small">Score Analytics</h1>
+                        <p class="body-large text-secondary">Deeper visualization of scores, experience correlations, and candidate features</p>
+                    </div>
+                </div>
+
+                <div class="analytics-grid">
+                    <!-- Scatter Plot -->
+                    <div class="card elevation-1 chart-card">
+                        <h3 class="title-medium">Years of Experience vs. Match Score</h3>
+                        <p class="body-small text-secondary padding-bottom-sm">Hover over dots to inspect candidate profiles. Sized by technical skill density.</p>
+                        <div class="chart-wrapper-large">
+                            <canvas id="experience-score-scatter"></canvas>
+                        </div>
+                    </div>
+                    <!-- Radar chart -->
+                    <div class="card elevation-1 chart-card">
+                        <h3 class="title-medium">Category Averages (Radar Evaluation)</h3>
+                        <p class="body-small text-secondary padding-bottom-sm">Comparing Top 100 Candidates vs. All Valid Candidates in Pool</p>
+                        <div class="chart-wrapper-large">
+                            <canvas id="radar-evaluation-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-grid">
+                    <!-- Donut chart -->
+                    <div class="card elevation-1 chart-card">
+                        <h3 class="title-medium">Company Profile Distribution</h3>
+                        <p class="body-small text-secondary padding-bottom-sm">Product companies are favored per JD preferences; consulting firms penalized.</p>
+                        <div class="chart-wrapper-medium">
+                            <canvas id="company-donut-chart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Skills Heatmap or Grid -->
+                    <div class="card elevation-1 chart-card">
+                        <h3 class="title-medium">Top Skills Distribution in Top Candidates</h3>
+                        <p class="body-small text-secondary padding-bottom-sm">Distribution rate of core skills in the top candidate selections</p>
+                        <div class="chart-wrapper-medium flex-col" id="skills-bar-grid">
+                            <!-- Custom SVG horizontal distribution -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: HONEYPOTS -->
+            <section class="tab-panel" id="panel-honeypots">
+                <div class="panel-header">
+                    <div>
+                        <h1 class="display-small">Honeypot Review Panel</h1>
+                        <p class="body-large text-secondary">Review suspicious profiles flagged and penalized to 0 score by the ranking engine</p>
+                    </div>
+                </div>
+
+                <!-- Anomaly Overview Cards -->
+                <div class="anomaly-cards-grid">
+                    <div class="anomaly-summary-card card elevation-1 bg-error-light border-error">
+                        <span class="anomaly-count text-error" id="honeypot-total-card">80</span>
+                        <span class="anomaly-title text-error">Total Honeypots Found</span>
+                        <p class="body-small text-secondary">All flagged profiles are set to 0.0 relevance and excluded from rankings.</p>
+                    </div>
+                    <div class="anomaly-summary-card card elevation-1">
+                        <span class="anomaly-count text-warning">21</span>
+                        <span class="anomaly-title text-warning">Expert skills 0-Exp</span>
+                        <p class="body-small text-secondary">Listed "expert" proficiency in multiple technical skills but 0 months of use.</p>
+                    </div>
+                    <div class="anomaly-summary-card card elevation-1">
+                        <span class="anomaly-count text-warning">96</span>
+                        <span class="anomaly-title text-warning">Keyword Stuffers</span>
+                        <p class="body-small text-secondary">Non-technical job titles (Marketing/Sales) with 10+ core AI/ML tech skills.</p>
+                    </div>
+                    <div class="anomaly-summary-card card elevation-1">
+                        <span class="anomaly-count text-warning">84</span>
+                        <span class="anomaly-title text-warning">Timeline & Salary</span>
+                        <p class="body-small text-secondary">Job duration differences, impossible start dates, and min expected salary > max.</p>
+                    </div>
+                </div>
+
+                <!-- Honeypot Data Grid -->
+                <div class="card elevation-1 margin-top-lg">
+                    <div class="table-header-toolbar">
+                        <h3 class="title-medium">Flagged Profile Log</h3>
+                        <span class="badge badge-error" id="honeypots-table-title-count">80 quarantined</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Candidate ID</th>
+                                <th>Name</th>
+                                <th>Primary Anomaly Flag</th>
+                                <th>Score (Original)</th>
+                                <th>Penalized Score</th>
+                                <th class="actions-column">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="honeypots-table-body">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 5: PARSER -->
+            <section class="tab-panel" id="panel-parser">
+                <div class="panel-header">
+                    <div>
+                        <h1 class="display-small">Job Description Parser</h1>
+                        <p class="body-large text-secondary">Parsed requirements extraction, weights configurations, and scoring parameters</p>
+                    </div>
+                </div>
+
+                <!-- JD View Grid -->
+                <div class="parser-grid">
+                    <!-- Left Column: Upload / Text View -->
+                    <div class="card elevation-1 flex-col">
+                        <h3 class="title-medium padding-bottom-sm">Target Role Profile</h3>
+                        <div class="jd-meta-badges">
+                            <span class="badge badge-primary">Senior AI Engineer</span>
+                            <span class="badge badge-secondary">Pune/Noida, IN</span>
+                            <span class="badge badge-secondary">Experience: 5-9 Years</span>
+                        </div>
+                        <div class="jd-scrollable-doc">
+                            <p class="body-medium text-bold">Job Description: Senior AI Engineer — Founding Team</p>
+                            <p class="body-small text-secondary">Company: Redrob AI (Series A talent intelligence platform)</p>
+                            <hr class="divider">
+                            <p class="body-medium">We're looking for someone who is simultaneously comfortable with deep technical depth in modern ML systems (embeddings, retrieval, ranking, LLMs) and a scrappy product-engineering attitude.</p>
+                            <p class="body-medium text-bold margin-top-sm">Core Skills Required:</p>
+                            <ul>
+                                <li>Production embeddings-based retrieval systems (sentence-transformers, OpenAI, BGE, E5)</li>
+                                <li>Vector databases or hybrid search (Pinecone, Weaviate, Qdrant, Milvus, FAISS, OpenSearch)</li>
+                                <li>Strong Python and code quality</li>
+                                <li>Evaluation frameworks for ranking systems (NDCG, MRR, MAP, A/B testing)</li>
+                            </ul>
+                            <p class="body-medium text-bold margin-top-sm">Anti-Patterns (Penalized):</p>
+                            <ul>
+                                <li>Candidates who switch companies every 1.5 years (title-chasers)</li>
+                                <li>LangChain framework-only enthusiasts without pre-LLM ML experience</li>
+                                <li>Entire career spent solely at service consulting firms (TCS, Infosys, etc.)</li>
+                                <li>Pure researchers without production deployment experience</li>
+                            </ul>
+                        </div>
+                        <textarea id="jd-paste-area" class="search-input-box" style="height: 100px; border-radius: var(--radius-md); padding: 12px; margin-top: 16px; resize: none; width:100%; border: 1px solid var(--primary-40);" placeholder="Paste a new job description here to simulate AI skill extraction..."></textarea>
+                        <button class="btn btn-primary margin-top-sm" id="btn-parse-custom-jd" style="align-self: flex-start; height: 36px; padding: 0 16px;">
+                            <span class="material-icons" style="font-size:16px;">query_stats</span>
+                            <span style="font-size:13px;">Parse & Extract Skills</span>
+                        </button>
+                    </div>
+
+                    <!-- Right Column: Extracted Specs & Sliders -->
+                    <div class="card elevation-1 flex-col">
+                        <h3 class="title-medium padding-bottom-sm">Scoring Weight Configurations</h3>
+                        <div class="sliders-container">
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span class="body-large text-bold">Skills Match Score</span>
+                                    <span class="body-large font-mono text-bold" id="weight-skills-val">50%</span>
+                                </div>
+                                <input type="range" class="slider-control" id="slider-skills" min="0" max="100" value="50">
+                                <span class="body-small text-secondary">Weighted relevance of core retrieval & vector database skills with exponential depth-decay.</span>
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span class="body-large text-bold">Experience Fit Score</span>
+                                    <span class="body-large font-mono text-bold" id="weight-exp-val">30%</span>
+                                </div>
+                                <input type="range" class="slider-control" id="slider-exp" min="0" max="100" value="30">
+                                <span class="body-small text-secondary">Checks years range, product-company pedigree, technical titles, and job-hopping frequencies.</span>
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span class="body-large text-bold">Education Fit Score</span>
+                                    <span class="body-large font-mono text-bold" id="weight-edu-val">20%</span>
+                                </div>
+                                <input type="range" class="slider-control" id="slider-edu" min="0" max="100" value="20">
+                                <span class="body-small text-secondary">Evaluates university ranking tier, degree level (MS/PhD), and technical fields of study.</span>
+                            </div>
+
+                            <div class="weights-sum-banner bg-success-light" id="weights-sum-box">
+                                <span class="material-icons text-success">check_circle</span>
+                                <span class="body-medium text-success text-bold">Weights total: 100% (Valid)</span>
+                            </div>
+
+                            <div class="weights-actions-row">
+                                <button class="btn btn-secondary" id="reset-weights-btn">Reset to Default</button>
+                                <button class="btn btn-primary" id="save-weights-btn">Save Configuration</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: SETTINGS -->
+            <section class="tab-panel" id="panel-settings">
+                <div class="panel-header">
+                    <div>
+                        <h1 class="display-small">Engine Settings</h1>
+                        <p class="body-large text-secondary">Configure rules toggles, CSV outputs, and metadata properties</p>
+                    </div>
+                </div>
+
+                <div class="settings-grid">
+                    <!-- Honeypot Switches -->
+                    <div class="card elevation-1 flex-col">
+                        <h3 class="title-medium padding-bottom-sm">Honeypot Rules Config</h3>
+                        <div class="switches-list">
+                            <div class="switch-row">
+                                <div>
+                                    <span class="body-medium text-bold">Expert Skill with 0 Months</span>
+                                    <p class="body-small text-secondary">Flag candidates claiming expert skill without duration.</p>
+                                </div>
+                                <label class="switch-control">
+                                    <input type="checkbox" id="toggle-expert-zero" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            <div class="switch-row">
+                                <div>
+                                    <span class="body-medium text-bold">Non-tech Titles with 10+ Tech Skills</span>
+                                    <p class="body-small text-secondary">Flag keyword stuffers who have non-tech current roles.</p>
+                                </div>
+                                <label class="switch-control">
+                                    <input type="checkbox" id="toggle-kw-stuff" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            <div class="switch-row">
+                                <div>
+                                    <span class="body-medium text-bold">Timeline duration mismatch</span>
+                                    <p class="body-small text-secondary">Detect overlap dates and stated duration differences.</p>
+                                </div>
+                                <label class="switch-control">
+                                    <input type="checkbox" id="toggle-timeline" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            <div class="switch-row">
+                                <div>
+                                    <span class="body-medium text-bold">Inverted salary range</span>
+                                    <p class="body-small text-secondary">Detect when min salary request exceeds max range.</p>
+                                </div>
+                                <label class="switch-control">
+                                    <input type="checkbox" id="toggle-inverted-sal" checked>
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions & Metadata -->
+                    <div class="card elevation-1 flex-col">
+                        <h3 class="title-medium padding-bottom-sm">Export & Submissions</h3>
+                        <p class="body-medium text-secondary margin-bottom-md">Generate final files or run format validation steps.</p>
+                        
+                        <div class="button-action-stack">
+                            <button class="btn btn-primary btn-full" id="settings-validate-csv">
+                                <span class="material-icons btn-icon">check_circle</span>
+                                <span>Validate Submission Format</span>
+                            </button>
+                            <button class="btn btn-secondary btn-full" id="settings-download-csv">
+                                <span class="material-icons btn-icon">file_download</span>
+                                <span>Download Submission.csv</span>
+                            </button>
+                        </div>
+
+                        <hr class="divider margin-vertical-md">
+
+                        <h3 class="title-small padding-bottom-xs">Repository Context</h3>
+                        <p class="body-small text-secondary">GitHub Link: <span class="font-mono text-bold text-primary">https://github.com/mamid/redrob-ranking</span></p>
+                        <p class="body-small text-secondary margin-top-xs">Author: <span class="text-bold">Mamidi Vashisht (Antigravity Team)</span></p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- CANDIDATE DETAIL MODAL -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-container elevation-3" id="modal-container">
+            <button class="icon-btn modal-close-btn" id="modal-close" aria-label="Close modal">
+                <span class="material-icons">close</span>
+            </button>
+            
+            <div class="modal-content">
+                <!-- Sidebar -->
+                <div class="modal-sidebar">
+                    <div class="modal-avatar" id="modal-avatar">
+                        <span>JD</span>
+                    </div>
+                    <h2 class="headline-medium text-center margin-top-md" id="modal-name">John Doe</h2>
+                    <p class="body-medium text-secondary text-center text-bold" id="modal-title">Senior AI Engineer</p>
+                    
+                    <div class="modal-company-info">
+                        <div class="info-row">
+                            <span class="material-icons font-sm text-secondary">business</span>
+                            <span class="body-medium text-secondary" id="modal-company">Swiggy</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="material-icons font-sm text-secondary">location_on</span>
+                            <span class="body-medium text-secondary" id="modal-location">Bangalore, IN</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats Grid -->
+                    <div class="quick-stats-grid margin-top-lg">
+                        <div class="quick-stat-box">
+                            <span class="material-icons font-md text-primary">work</span>
+                            <span class="title-small" id="modal-stat-exp">6.2 yrs</span>
+                            <span class="label-small text-secondary">Experience</span>
+                        </div>
+                        <div class="quick-stat-box">
+                            <span class="material-icons font-md text-success" id="modal-stat-avail-icon">event_available</span>
+                            <span class="title-small text-success" id="modal-stat-avail">Open</span>
+                            <span class="label-small text-secondary">Availability</span>
+                        </div>
+                        <div class="quick-stat-box">
+                            <span class="material-icons font-md text-info">schedule</span>
+                            <span class="title-small" id="modal-stat-notice">30 days</span>
+                            <span class="label-small text-secondary">Notice Period</span>
+                        </div>
+                        <div class="quick-stat-box">
+                            <span class="material-icons font-md text-warning">chat</span>
+                            <span class="title-small" id="modal-stat-resp">85%</span>
+                            <span class="label-small text-secondary">Response Rate</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-full margin-top-lg" id="modal-copy-id-btn">
+                        <span class="material-icons btn-icon">content_copy</span>
+                        <span>Copy Candidate ID</span>
+                    </button>
+                </div>
+
+                <!-- Main Column -->
+                <div class="modal-main">
+                    <!-- Score Header -->
+                    <div class="modal-section flex-row align-center space-between border-bottom padding-bottom-md">
+                        <div>
+                            <h3 class="headline-small">Candidate Evaluation Score</h3>
+                            <p class="body-medium text-secondary">Breakdown weights: Skills 50%, Experience 30%, Education 20%</p>
+                        </div>
+                        <!-- Radial Overall Score SVG -->
+                        <div class="score-ring-wrapper">
+                            <svg class="radial-score-svg" viewBox="0 0 80 80">
+                                <circle class="track" cx="40" cy="40" r="34"></circle>
+                                <circle class="fill" id="modal-radial-fill" cx="40" cy="40" r="34"></circle>
+                            </svg>
+                            <span class="ring-score-text" id="modal-radial-score">8.45</span>
+                        </div>
+                    </div>
+
+                    <!-- Quarantined Banner (if applicable) -->
+                    <div class="honeypot-banner bg-error-light hidden" id="modal-honeypot-banner">
+                        <span class="material-icons text-error">warning</span>
+                        <span class="body-medium text-error text-bold" id="modal-honeypot-reason">Honeypot Detected: Expert skill with 0 months.</span>
+                    </div>
+
+                    <!-- Score Progress bars -->
+                    <div class="modal-section margin-top-md">
+                        <h4 class="title-medium margin-bottom-sm">Detailed Category Scores</h4>
+                        
+                        <div class="progress-bar-group">
+                            <div class="progress-info">
+                                <span class="body-medium text-bold">Skills Match Score (Weight: 50%)</span>
+                                <span class="body-medium font-mono text-bold" id="modal-score-skills-text">4.23 / 5.0</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill bg-skills" id="modal-score-skills-bar" style="width: 84%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-bar-group">
+                            <div class="progress-info">
+                                <span class="body-medium text-bold">Experience Fit Score (Weight: 30%)</span>
+                                <span class="body-medium font-mono text-bold" id="modal-score-exp-text">2.54 / 3.0</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill bg-experience" id="modal-score-exp-bar" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-bar-group">
+                            <div class="progress-info">
+                                <span class="body-medium text-bold">Education Fit Score (Weight: 20%)</span>
+                                <span class="body-medium font-mono text-bold" id="modal-score-edu-text">1.69 / 2.0</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill bg-education" id="modal-score-edu-bar" style="width: 84%"></div>
+                            </div>
+                        </div>
+
+                        <div class="progress-bar-group">
+                            <div class="progress-info">
+                                <span class="body-medium text-bold">Behavioral Multiplier (Scale: 0.3x - 2.0x)</span>
+                                <span class="body-medium font-mono text-bold" id="modal-multiplier-text">1.25x</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill bg-behavior" id="modal-multiplier-bar" style="width: 62%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Explanatory Reasoning -->
+                    <div class="modal-section reasoning-block bg-info-light">
+                        <h4 class="title-medium text-info margin-bottom-xs">Ranking Engine Reasoning</h4>
+                        <p class="body-large italic" id="modal-reasoning">"Senior AI Engineer with 6.2 years building RAG systems..."</p>
+                    </div>
+
+                    <!-- Tabs: Experience / Skills -->
+                    <div class="modal-section margin-top-lg">
+                        <div class="modal-tab-bar">
+                            <button class="modal-tab-btn active" data-modal-tab="modal-tab-exp">Experience Timeline</button>
+                            <button class="modal-tab-btn" data-modal-tab="modal-tab-skills">Skills Analysis</button>
+                            <button class="modal-tab-btn" data-modal-tab="modal-tab-edu">Education</button>
+                        </div>
+                        
+                        <div class="modal-tab-content active" id="modal-tab-exp">
+                            <!-- Timeline container -->
+                            <div class="experience-timeline-vertical" id="modal-timeline-container">
+                                <!-- Dynamic jobs -->
+                            </div>
+                        </div>
+                        
+                        <div class="modal-tab-content" id="modal-tab-skills">
+                            <!-- Grid of skills -->
+                            <div class="skills-grid-modal" id="modal-skills-container">
+                                <!-- Dynamic chips -->
+                            </div>
+                        </div>
+
+                        <div class="modal-tab-content" id="modal-tab-edu">
+                            <!-- Education list -->
+                            <div class="education-list-modal" id="modal-edu-container">
+                                <!-- Dynamic institutions -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button class="btn btn-tertiary" id="modal-prev-btn">
+                    <span class="material-icons">chevron_left</span>
+                    <span>Previous</span>
+                </button>
+                <span class="body-medium text-secondary text-bold" id="modal-page-indicator">5 / 100</span>
+                <button class="btn btn-tertiary" id="modal-next-btn">
+                    <span>Next</span>
+                    <span class="material-icons">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Chart.js CDN for Analytics (since this runs in the browser, Chart.js standard library is perfect) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Application Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
