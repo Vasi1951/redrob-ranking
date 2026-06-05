@@ -1,6 +1,6 @@
 # Redrob AI — Intelligent Candidate Discovery Engine & Dashboard
 
-Built for the **India Runs 2026 — Track 1: Data & AI Challenge** hosted by Hack2Skill × Redrob AI.
+Built by **Team NullVoid** for the **India Runs 2026 — Track 1: Data & AI Challenge** hosted by Hack2Skill × Redrob AI.
 
 ---
 
