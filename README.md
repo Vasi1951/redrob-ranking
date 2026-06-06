@@ -75,7 +75,11 @@ Our visual Telemetry Dashboard provides real-time insights, metrics, score distr
 
 ![Dashboard Preview](dashboard/screenshot.png)
 
-To load and browse the dashboard locally:
+### Live Deployment
+The dashboard is deployed and hosted live on GitHub Pages:
+👉 **[https://vasi1951.github.io/redrob-ranking/dashboard/](https://vasi1951.github.io/redrob-ranking/dashboard/)**
+
+Alternatively, to load and browse the dashboard locally:
 1. Run a local web server:
    ```bash
    python -m http.server 8000
